@@ -3,30 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Babyphone Test</title>
+<title>Babyphone</title>
 </head>
 <body>
-<h1>Babyphone Test</h1>
-
+<h1>Babyphone</h1>
 <p id="role-msg"></p>
-
 <button id="start-micro">Démarrer micro</button>
 
-<script>
-const urlParams = new URLSearchParams(window.location.search);
-const role = urlParams.get('role'); // "b" ou "p"
-
-const startButton = document.getElementById('start-micro');
-const roleMsg = document.getElementById('role-msg');
-
-if(role === "b") {
-    roleMsg.innerText = "Mode bébé : bouton micro visible";
-    startButton.style.display = "block";
-    startButton.addEventListener("click", () => alert("Micro activé (test)"));
-} else {
-    roleMsg.innerText = "Mode parent : pas de bouton micro";
-    startButton.style.display = "none";
-}
-</script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+        integrity="sha384-AqzHWGzQd+8Zl+ZmkkZyTS8tWc/xHh1l/bz2tZxjA7q7wYI/eZ/+JbssL0OWj1wZ"
+        crossorigin="anonymous"></script>
+<script src="main.js"></script>
 </body>
 </html>
