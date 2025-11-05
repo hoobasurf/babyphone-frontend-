@@ -1,4 +1,4 @@
-const socket = io("https://babyphone-xxxx.up.railway.app"); // URL du serveur Railway
+const socket = io("https://baby-phone-production.up.railway.app"); // URL du serveur Railway
 const startBtn = document.getElementById("start");
 const remoteAudio = document.getElementById("remoteAudio");
 
