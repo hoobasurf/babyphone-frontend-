@@ -1,12 +1,11 @@
-// Serveur Railway
-const SERVER_URL = "https://baby-phone-production.up.railway.app";
+const SERVER_URL = "https://baby-phone-production.up.railway.app"; // Ton serveur Railway
 const socket = io(SERVER_URL);
 
 const startButton = document.getElementById('start-micro');
 const roleMsg = document.getElementById('role-msg');
 
 let role = null;
-startButton.style.display = "none";
+startButton.style.display = "none"; // bouton micro caché au départ
 
 // ===== Choix du rôle =====
 document.getElementById('role-baby').onclick = async () => {
@@ -18,21 +17,21 @@ document.getElementById('role-baby').onclick = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            // Jouer localement pour tester
+            // Jouer localement pour test
             const audioElement = document.createElement("audio");
             audioElement.srcObject = stream;
             audioElement.autoplay = true;
 
-            // Envoyer audio au serveur via Socket.io
+            // Envoi audio au serveur
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorder.ondataavailable = e => {
                 if(e.data.size > 0) socket.emit("audio-stream", e.data);
             };
-            mediaRecorder.start(250); // envoie toutes les 250ms
+            mediaRecorder.start(250); // envoyer toutes les 250ms
 
             alert("Micro activé pour bébé ! Écran doit rester allumé");
         } catch(err) {
-            console.error("Erreur micro : ", err);
+            console.error("Erreur micro :", err);
             alert("Impossible d’accéder au micro !");
         }
     };
