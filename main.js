@@ -12,14 +12,13 @@ const socket = io(SERVER_URL);
 const urlParams = new URLSearchParams(window.location.search);
 const role = urlParams.get('role'); // "b" pour bébé, "p" pour parent
 
-// Sélection du bouton micro (assure-toi que l'ID correspond)
+// Sélection du bouton micro
 const startButton = document.getElementById('start-micro');
 
 // Fonction pour démarrer le micro (bébé)
 function startMicrophone() {
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-            // Envoi du flux audio au serveur
             const audioTracks = stream.getAudioTracks();
             if (audioTracks.length > 0) {
                 const track = audioTracks[0];
@@ -29,8 +28,7 @@ function startMicrophone() {
                 audioElement.srcObject = mediaStream;
                 audioElement.play();
 
-                // Ici tu peux envoyer le flux via Socket.io ou WebRTC
-                // Exemple simple : socket.emit("audio-stream", stream)
+                // Envoi du flux au serveur via Socket.io (exemple simplifié)
                 console.log("Microphone démarré pour bébé");
             }
         })
@@ -39,8 +37,6 @@ function startMicrophone() {
 
 // Fonction pour écouter l'audio (parent)
 function startListening() {
-    // Ici tu reçois le flux audio du serveur
-    // Exemple WebRTC simplifié :
     const audioElement = document.createElement("audio");
     audioElement.autoplay = true;
 
@@ -54,13 +50,10 @@ function startListening() {
 // ================================
 // Affichage selon le rôle
 // ================================
-
 if (role === "b") {
-    // Bébé : afficher bouton micro
     startButton.style.display = "block";
     startButton.addEventListener("click", startMicrophone);
 } else {
-    // Parent : cacher bouton micro et démarrer l'écoute
     startButton.style.display = "none";
     startListening();
 }
