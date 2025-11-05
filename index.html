@@ -6,43 +6,18 @@
 <title>Babyphone iPhone</title>
 </head>
 <body>
-<h1>Babyphone iPhone</h1>
-<p id="role-msg"></p>
+<h1>Babyphone</h1>
 
-<!-- Bouton micro -->
+<p id="role-msg"></p>
 <button id="start-micro">Démarrer micro</button>
 
 <!-- Sélection du rôle -->
 <button id="role-baby">Je suis bébé</button>
 <button id="role-parent">Je suis parent</button>
 
-<script>
-const startButton = document.getElementById('start-micro');
-const roleMsg = document.getElementById('role-msg');
-let role = null;
-
-// Au départ, bouton micro caché
-startButton.style.display = "none";
-
-// Choix du rôle
-document.getElementById('role-baby').onclick = () => {
-    role = "b";
-    roleMsg.innerText = "Mode bébé : bouton micro visible";
-    startButton.style.display = "block";
-};
-
-document.getElementById('role-parent').onclick = () => {
-    role = "p";
-    roleMsg.innerText = "Mode parent : écoute uniquement";
-    startButton.style.display = "none";
-};
-
-// Test bouton micro pour bébé
-startButton.onclick = () => {
-    if(role === "b") {
-        alert("Micro activé pour bébé !");
-    }
-};
-</script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+        integrity="sha384-AqzHWGzQd+8Zl+ZmkkZyTS8tWc/xHh1l/bz2tZxjA7q7wYI/eZ/+JbssL0OWj1wZ"
+        crossorigin="anonymous"></script>
+<script src="main.js"></script>
 </body>
 </html>
