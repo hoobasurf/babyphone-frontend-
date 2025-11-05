@@ -1,38 +1,66 @@
-const socket = io("https://baby-phone-production.up.railway.app"); // URL du serveur Railway
-const startBtn = document.getElementById("start");
-const remoteAudio = document.getElementById("remoteAudio");
+// ================================
+// Babyphone Frontend main.js
+// ================================
 
-let pc;
-let localStream;
-let room = "babyphone-room";
+// Remplace cette URL par ton serveur Railway public
+const SERVER_URL = "https://baby-phone-production.up.railway.app";
 
-startBtn.onclick = async () => {
-  localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  pc = new RTCPeerConnection();
+// Connexion au serveur Socket.io
+const socket = io(SERVER_URL);
 
-  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+// Récupérer le paramètre "role" dans l'URL
+const urlParams = new URLSearchParams(window.location.search);
+const role = urlParams.get('role'); // "b" pour bébé, "p" pour parent
 
-  pc.ontrack = event => {
-    remoteAudio.srcObject = event.streams[0];
-  };
+// Sélection du bouton micro (assure-toi que l'ID correspond)
+const startButton = document.getElementById('start-micro');
 
-  pc.onicecandidate = event => {
-    if (event.candidate) socket.emit("ice-candidate", { candidate: event.candidate, target: "parent" });
-  };
+// Fonction pour démarrer le micro (bébé)
+function startMicrophone() {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            // Envoi du flux audio au serveur
+            const audioTracks = stream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                const track = audioTracks[0];
+                const mediaStream = new MediaStream([track]);
 
-  socket.emit("join", room);
+                const audioElement = document.createElement("audio");
+                audioElement.srcObject = mediaStream;
+                audioElement.play();
 
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-  socket.emit("offer", { sdp: offer, target: "parent" });
-};
+                // Ici tu peux envoyer le flux via Socket.io ou WebRTC
+                // Exemple simple : socket.emit("audio-stream", stream)
+                console.log("Microphone démarré pour bébé");
+            }
+        })
+        .catch(err => console.error("Erreur micro : ", err));
+}
 
-socket.on("offer", async data => {
-  await pc.setRemoteDescription(data.sdp);
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
-  socket.emit("answer", { sdp: answer, target: data.from });
-});
+// Fonction pour écouter l'audio (parent)
+function startListening() {
+    // Ici tu reçois le flux audio du serveur
+    // Exemple WebRTC simplifié :
+    const audioElement = document.createElement("audio");
+    audioElement.autoplay = true;
 
-socket.on("answer", async data => await pc.setRemoteDescription(data.sdp));
-socket.on("ice-candidate", async data => { try { await pc.addIceCandidate(data.candidate); } catch(e){console.error(e);} });
+    socket.on("audio-stream", (stream) => {
+        audioElement.srcObject = stream;
+    });
+
+    console.log("Mode parent : écoute audio activée");
+}
+
+// ================================
+// Affichage selon le rôle
+// ================================
+
+if (role === "b") {
+    // Bébé : afficher bouton micro
+    startButton.style.display = "block";
+    startButton.addEventListener("click", startMicrophone);
+} else {
+    // Parent : cacher bouton micro et démarrer l'écoute
+    startButton.style.display = "none";
+    startListening();
+}
